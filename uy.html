@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex Documentation</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color: #222; }
+    h1, h2, h3 { color: #111; }
+    pre { background: #f5f5f5; padding: 15px; border-radius: 5px; position: relative; }
+    code { font-family: Consolas, monospace; }
+    button.copy-btn { position: absolute; top: 5px; right: 5px; padding: 5px 10px; cursor: pointer; background: #007BFF; color: white; border: none; border-radius: 3px; font-size: 12px; }
+    button.copy-btn:hover { background: #0056b3; }
+    section { margin-bottom: 50px; }
+    a { color: #007BFF; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>Cortex</h1>
+<p>Lightweight Python wrapper for Facebook Messenger and Graph API. Send messages, post to feed, and handle webhooks easily with Flask.</p>
+
+<section>
+<h2>Installation</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pip install cortex</code></pre>
+</section>
+
+<section>
+<h2>Setup</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from dotenv import load_dotenv
+load_dotenv()
+import os
+
+ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")</code></pre>
+</section>
+
+<section>
+<h2>Initialize Client</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from cortex import Client
+
+fb = Client(ACCESS_TOKEN)</code></pre>
+</section>
+
+<section>
+<h2>Sending Messages</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># Text message
+fb.sendMsg(psid="USER_ID", text="Hello!", msg_type="text")
+
+# Image message
+fb.sendMsg(psid="USER_ID", msg_type="image", media_url="https://example.com/image.jpg")
+
+# Video message
+fb.sendMsg(psid="USER_ID", msg_type="video", media_url="https://example.com/video.mp4")</code></pre>
+</section>
+
+<section>
+<h2>Posting to Feed</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># Text post
+fb.post(media_type="text", text="Hello world!")
+
+# Image post
+fb.postFeed(media_type="image", media_url="https://example.com/image.jpg", text="Caption here")
+
+# Video post
+fb.postFeed(media_type="video", media_url="https://example.com/video.mp4", title="My Video", description="Description")</code></pre>
+</section>
+
+<section>
+<h2>Webhook with Flask</h2>
+<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from flask import Flask, request
+app = Flask(__name__)
+
+@app.route("/webhook", methods=["GET", "POST"])
+def webhook():
+    if request.method == "GET":
+        return fb.challenge(VERIFY_TOKEN)
+
+    elif request.method == "POST":
+        def echo(sender_id, msg_type, content):
+            if msg_type == "text":
+                fb.sendMsg(psid=sender_id, text=f"You sent: {content}", msg_type="text")
+            else:
+                fb.sendMsg(psid=sender_id, text=f"You sent a {msg_type}: {content}", msg_type="text")
+        return fb.event(handler=echo)
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)</code></pre>
+</section>
+
+<section>
+<h2>Features</h2>
+<ul>
+    <li>Send text, image, video, audio, and file messages.</li>
+    <li>Post text, images, and videos to your Facebook feed.</li>
+    <li>Webhook support with Flask for GET verification and POST events.</li>
+    <li>Handles attachments and message types automatically.</li>
+</ul>
+</section>
+
+<section>
+<h2>Contact</h2>
+<p>Telegram: <a href="https://t.me/cortexinvader" target="_blank">@cortexinvader</a></p>
+<p>Facebook: <a href="https://facebook.com/Cortexinvader" target="_blank">facebook.com/Cortexinvader</a></p>
+</section>
+
+<section>
+<h2>License</h2>
+<p>MIT License</p>
+</section>
+
+<script>
+function copyCode(btn) {
+    const code = btn.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(() => {
+        btn.innerText = 'Copied';
+        setTimeout(() => btn.innerText = 'Copy', 1500);
+    });
+}
+</script>
+
+</body>
+</html>
