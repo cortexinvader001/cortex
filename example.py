@@ -19,6 +19,7 @@ def webhook():
             if msg_type == "text":
                 fb.sendMsg(psid=sender_id, text=f"You sent: {content}", msg_type="text")
             else:
+                fb.sendMsg(psid=sender_id, text=None, msg_type=msg_type, media_url=content)
                 fb.sendMsg(psid=sender_id, text=f"You sent a {msg_type}: {content}", msg_type="text")
         return fb.event(handler=echo)
 
